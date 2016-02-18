@@ -2,6 +2,7 @@ package com.rjil.snw.automation.test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Driver;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -12,23 +13,17 @@ public class BaseTest {
 	
 	public static RemoteWebDriver driver;
 
-	// Application setup methods..
-	/**
-	 * @param product this contains name of the product
-	 * @param browser this is type of the browser
-	 * @return WebDriver
-	 * @throws MalformedURLException
-	 */
-	public  BaseTest(String device) throws MalformedURLException  {
-		if (device.equalsIgnoreCase("IOS"))
-		{
-			driver = DriverDetails.IOS.doSomething();
+	public void initialiseDriver(String device) throws MalformedURLException {
+		if(device.equalsIgnoreCase("IOS")){
+			driver = DriverDetails.IOS.getDriverDetails();
 		}
-		else
-		{
-			driver = DriverDetails.Andriod.doSomething();
+		else if(device.equalsIgnoreCase("Android")) {
+			driver = DriverDetails.Andriod.getDriverDetails();
 		}
-
+	}
+	
+	public void releaseDriver() {
+		driver.quit();
 	}
 	
 	

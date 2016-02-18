@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Simple Logger Suite">
+  <listeners>
+    <listener class-name="com.rjil.snw.automation.tests.android.LoggingClass" />
+  </listeners>
+
+  <test name="Simple Logger test">
+    <parameter name= "udid" value= "0123456789ABCDEF"/>
+    <classes>
+      <class name="com.rjil.snw.automation.tests.android.HomePageTest" />
+    </classes>
+  </test>
+</suite>
