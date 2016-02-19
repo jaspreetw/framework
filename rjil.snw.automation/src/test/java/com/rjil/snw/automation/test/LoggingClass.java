@@ -1,4 +1,4 @@
-package com.rjil.snw.automation.tests.android;
+package com.rjil.snw.automation.test;
 
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;

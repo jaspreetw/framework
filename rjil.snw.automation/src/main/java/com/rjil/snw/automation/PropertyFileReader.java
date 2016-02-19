@@ -7,9 +7,7 @@ import java.util.Properties;
 
 public class PropertyFileReader {
 
-
 	Properties prop = new Properties();
-	
 
 	public String getKeyValues(String key) {
 		try {

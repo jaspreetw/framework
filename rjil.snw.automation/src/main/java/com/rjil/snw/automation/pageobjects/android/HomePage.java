@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -16,6 +18,9 @@ public class HomePage {
 
 	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/deviceNetworkInfo")
 	private MobileElement deviceInfo;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/appInfo")
+	private MobileElement versionInfo;
 
 	public HomePage(RemoteWebDriver remoteWebDriver) {
 		driver = (AppiumDriver) remoteWebDriver;
@@ -23,8 +28,20 @@ public class HomePage {
 	}
 
 	public String getDeviceName() {
-		String result = this.deviceInfo.getText();
-		
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(this.deviceInfo));
+		String result = this.deviceInfo.getText();	
 		return result;
 	}
+	
+	public String getNetworkName() {
+		String result = this.deviceInfo.getText();	
+		return result;
+	}
+	
+	public String getVersionNumber() {
+		String result = this.versionInfo.getText();
+		return result;
+	}
+	
 }

@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.rjil.snw.automation.AdbCommandGenerator;
+import com.rjil.snw.automation.AdbResponse;
 import com.rjil.snw.automation.CommandRunner;
 import com.rjil.snw.automation.pageobjects.android.HomePage;
 import com.rjil.snw.automation.test.BaseTest;
@@ -30,10 +32,30 @@ public class HomePageTest extends BaseTest {
 
 	@Parameters({ "udid" })
 	@Test
-	public void getDetails(String udid) {
-		String expected = AdbCommandGenerator.getDeviceName(udid);
+	public void testDeviceName(String udid) {
+		String expected = AdbResponse.getDeviceName(udid);
 		String result = homePage.getDeviceName();
 		Assert.assertTrue(result.contains(expected));
 	}
+	
+	@Parameters({ "udid" })
+	@Test
+	public void testNetworkName(String udid) {
+		String expected = AdbResponse.getNetworkName(udid);
+		String result = homePage.getNetworkName();
+		Assert.assertTrue(result.contains(expected));
+	}
 
+	@Parameters({ "udid" })
+	@Test
+	public void testVersionNumber(String udid) {
+		String expected = AdbResponse.getVersionNumber();
+		String result = homePage.getVersionNumber();
+		Assert.assertTrue(result.contains(expected));
+	}
+	
+	@AfterTest
+	public void endTest() {
+		releaseDriver();
+	}
 }
