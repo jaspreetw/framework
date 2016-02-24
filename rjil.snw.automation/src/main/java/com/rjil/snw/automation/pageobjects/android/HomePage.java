@@ -1,8 +1,5 @@
 package com.rjil.snw.automation.pageobjects.android;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
@@ -91,15 +88,19 @@ public class HomePage {
 
 	
 	public void setWifiName(String wifiName) {
+		driver.findElement(By.xpath("//android.widget.TextView[@text='" + wifiName + "']")).click();
+		this.continueButton.click();
+	}
+	
+	public void getWifiPage() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(this.receive));
 		this.send.click();
 		this.androidPeer.click();
-		WebDriverWait wait1 = new WebDriverWait(driver, 10);
-		wait1.until(ExpectedConditions
-				.visibilityOfElementLocated(By.xpath("//android.widget.TextView[@text='" + wifiName + "']")));
-		driver.findElement(By.xpath("//android.widget.TextView[@text='" + wifiName + "']")).click();
-		this.continueButton.click();
+	}
+	
+	public boolean isWifiNamePresent(String wifiName) {
+		return driver.findElement(By.xpath("//android.widget.TextView[@text='" + wifiName + "']")).isDisplayed();
 	}
 	
 }

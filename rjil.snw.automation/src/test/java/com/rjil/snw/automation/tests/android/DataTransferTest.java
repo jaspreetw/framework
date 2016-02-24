@@ -3,7 +3,6 @@ package com.rjil.snw.automation.tests.android;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -41,9 +40,8 @@ public class DataTransferTest {
 	
 	String senderUdid = null;
 	String receiverUdid = null;
-
-	public static RemoteWebDriver senderDriver;
-	public static RemoteWebDriver receiverDriver;
+	
+	HashMap<String, String> hashmap = null;
 	
 	public DataTransferTest() throws MalformedURLException {
 		senderUdid = properties.getKeyValues("SenderUdid");
@@ -60,6 +58,7 @@ public class DataTransferTest {
 		receiverHomePage = new HomePage(receiver.driver);
 		
 		String wifiName = receiverHomePage.getWifiName();
+		senderHomePage.getWifiPage();
 		senderHomePage.setWifiName(wifiName);
 	}
 	
@@ -76,11 +75,19 @@ public class DataTransferTest {
 	public void remindersNotSupportedTest() {
 		senderLightDataPage = new LightDataTransferPage(sender.driver);
 		receiverLightDataPage = new LightDataTransferPage(receiver.driver);
-		HashMap<String, String> hashmap = senderLightDataPage.createList();
+		hashmap = senderLightDataPage.createList();
 		Assert.assertEquals(hashmap.get("Reminders"), "Not Supported");
 	}
 	
 	@Test(dependsOnMethods = { "remindersNotSupportedTest" })
+	public void lightDataCountTest() {
+		Assert.assertEquals(hashmap.get("Contacts"), properties.getKeyValues("Contacts"));
+		Assert.assertEquals(hashmap.get("Call Logs"), properties.getKeyValues("CallLogs"));
+		Assert.assertEquals(hashmap.get("Calendar"), properties.getKeyValues("Calendar"));
+		Assert.assertEquals(hashmap.get("Messages"), properties.getKeyValues("Messages"));
+	}
+	
+	@Test(dependsOnMethods = { "lightDataCountTest" })
 	public void selectiveDataTransferTest() {
 		Assert.assertFalse(senderLightDataPage.unselectCallLogs());
 	}
@@ -96,11 +103,19 @@ public class DataTransferTest {
 		senderLightDataPage.continueToHeavyDataTransfer();
 		senderHeavyDataPage = new HeavyDataTransferPage(sender.driver);
 		receiverHeavyDataPage = new HeavyDataTransferPage(receiver.driver);
-		HashMap<String, String> hashmap = senderHeavyDataPage.createList();
+		hashmap = senderHeavyDataPage.createList();
 		Assert.assertEquals(hashmap.get("Documents"), "Not Supported");
 	}
 	
 	@Test(dependsOnMethods = { "documentsNotSupportedTest" })
+	public void heavyDataCountTest() {
+		Assert.assertEquals(hashmap.get("Photos"), properties.getKeyValues("Photos"));
+		Assert.assertEquals(hashmap.get("Music"), properties.getKeyValues("Music"));
+		Assert.assertEquals(hashmap.get("Videos"), properties.getKeyValues("Videos"));
+		Assert.assertEquals(hashmap.get("Applications"), properties.getKeyValues("Applications"));
+	}
+	
+	@Test(dependsOnMethods = { "heavyDataCountTest" })
 	public void heavyDataTimeEstimateTest() {
 		Long estimatedTime = senderHeavyDataPage.getEstimatedTime();
 		Long actualTime = senderHeavyDataPage.getActualDataTransferTime();
