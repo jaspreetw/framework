@@ -1,61 +1,67 @@
 package com.rjil.snw.automation.tests.android;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.rjil.snw.automation.AdbResponse;
-import com.rjil.snw.automation.CommandRunner;
+import com.rjil.snw.automation.PropertyFileReader;
 import com.rjil.snw.automation.pageobjects.android.HomePage;
 import com.rjil.snw.automation.test.BaseTest;
 
-public class HomePageTest extends BaseTest {
+public class HomePageTest {
 
+	static PropertyFileReader properties = new PropertyFileReader();
+	BaseTest device = new BaseTest();;
 	HomePage homePage = null;
+	String udid = null;
 
 	public HomePageTest() throws MalformedURLException {
 		super();
-		initialiseDriver("Android");
+		udid = properties.getKeyValues("SenderUdid");
+		String portNo = properties.getKeyValues("SenderPortNo");
+		device.initialiseDriver("android", udid, portNo);
+		
 	}
 
 	@BeforeClass
 	public void setup() {
-		homePage = new HomePage(driver);
+		homePage = new HomePage(device.driver);
+		//receiverHomePage = new HomePage(receiver.driver);
 	}
 
-	@Parameters({ "udid" })
 	@Test
-	public void testDeviceName(String udid) {
+	public void testDeviceName() {
 		String expected = AdbResponse.getDeviceName(udid);
 		String result = homePage.getDeviceName();
 		Assert.assertTrue(result.contains(expected));
 	}
 	
-	@Parameters({ "udid" })
 	@Test
-	public void testNetworkName(String udid) {
+	public void testNetworkName() {
 		String expected = AdbResponse.getNetworkName(udid);
 		String result = homePage.getNetworkName();
 		Assert.assertTrue(result.contains(expected));
 	}
 
-	@Parameters({ "udid" })
 	@Test
-	public void testVersionNumber(String udid) {
+	public void testVersionNumber() {
 		String expected = AdbResponse.getVersionNumber();
 		String result = homePage.getVersionNumber();
 		Assert.assertTrue(result.contains(expected));
 	}
 	
+	@Test
+	public void testIsTandCpageDisplayed() {
+		boolean response = homePage.gotoTandCpage();
+		Assert.assertTrue(response);
+	}
+	
 	@AfterTest
 	public void endTest() {
-		releaseDriver();
+		device.releaseDriver();
 	}
 }

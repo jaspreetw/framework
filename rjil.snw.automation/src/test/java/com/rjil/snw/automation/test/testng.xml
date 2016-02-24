@@ -7,7 +7,7 @@
   <test name="Simple Logger test">
     <parameter name= "udid" value= "0123456789ABCDEF"/>
     <classes>
-      <class name="com.rjil.snw.automation.tests.android.HomePageTest" />
+      <class name="com.rjil.snw.automation.tests.android.TermsAndConditionsPageTest" />
     </classes>
   </test>
 </suite>

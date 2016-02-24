@@ -3,6 +3,7 @@ package com.rjil.snw.automation.pageobjects.android;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,12 +22,34 @@ public class HomePage {
 	
 	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/appInfo")
 	private MobileElement versionInfo;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/tandcLink")
+	private MobileElement linkToTandCpage;
 
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/connectAsSenderButton")
+	private MobileElement send;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/connectAsReceiverButton")
+	private MobileElement receive;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/connectToAndroidPeerButton")
+	private MobileElement androidPeer;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/instruction")
+	private MobileElement wifiName;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/continueButton")
+	private MobileElement continueButton;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/webView")
+	private MobileElement termsAndConditionsPage;
+	
 	public HomePage(RemoteWebDriver remoteWebDriver) {
 		driver = (AppiumDriver) remoteWebDriver;
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
 	}
 
+	
 	public String getDeviceName() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(this.deviceInfo));
@@ -34,14 +57,49 @@ public class HomePage {
 		return result;
 	}
 	
+	
 	public String getNetworkName() {
 		String result = this.deviceInfo.getText();	
 		return result;
 	}
 	
+	
 	public String getVersionNumber() {
 		String result = this.versionInfo.getText();
 		return result;
+	}
+	
+	
+	public boolean gotoTandCpage() {
+		this.linkToTandCpage.click(); 
+		return this.termsAndConditionsPage.isDisplayed();
+	}
+
+	
+	public String getWifiName() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(this.receive));
+		this.receive.click();
+		this.androidPeer.click();
+		WebDriverWait wait1 = new WebDriverWait(driver, 10);
+		wait1.until(ExpectedConditions.elementToBeClickable(this.continueButton));
+		String hotspotText = this.wifiName.getText();
+		String hotspotId = hotspotText.substring(hotspotText.lastIndexOf("SNW"));
+		this.continueButton.click();
+		return hotspotId;
+	}
+
+	
+	public void setWifiName(String wifiName) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(this.receive));
+		this.send.click();
+		this.androidPeer.click();
+		WebDriverWait wait1 = new WebDriverWait(driver, 10);
+		wait1.until(ExpectedConditions
+				.visibilityOfElementLocated(By.xpath("//android.widget.TextView[@text='" + wifiName + "']")));
+		driver.findElement(By.xpath("//android.widget.TextView[@text='" + wifiName + "']")).click();
+		this.continueButton.click();
 	}
 	
 }
