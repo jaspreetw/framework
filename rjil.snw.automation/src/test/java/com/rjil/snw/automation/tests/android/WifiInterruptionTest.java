@@ -8,6 +8,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.rjil.snw.automation.AdbResponse;
 import com.rjil.snw.automation.PropertyFileReader;
 import com.rjil.snw.automation.pageobjects.android.HeavyDataTransferPage;
 import com.rjil.snw.automation.pageobjects.android.HomePage;
@@ -16,9 +17,8 @@ import com.rjil.snw.automation.pageobjects.android.PicturePage;
 import com.rjil.snw.automation.pageobjects.android.ReportPage;
 import com.rjil.snw.automation.test.BaseTest;
 
-
-public class DataTransferTest {
-	static PropertyFileReader properties = new PropertyFileReader();
+public class WifiInterruptionTest {
+static PropertyFileReader properties = new PropertyFileReader();
 	
 	BaseTest sender = new BaseTest();
 	BaseTest receiver = new BaseTest();
@@ -30,7 +30,6 @@ public class DataTransferTest {
 	PicturePage receiverPicturePage = null;
 	
 	LightDataTransferPage senderLightDataPage = null;
-	LightDataTransferPage receiverLightDataPage = null;
 	
 	HeavyDataTransferPage senderHeavyDataPage = null;
 	HeavyDataTransferPage receiverHeavyDataPage = null;
@@ -43,7 +42,7 @@ public class DataTransferTest {
 	
 	HashMap<String, String> hashmap = null;
 	
-	public DataTransferTest() throws MalformedURLException {
+	public WifiInterruptionTest() throws MalformedURLException {
 		senderUdid = properties.getKeyValues("SenderUdid");
 		receiverUdid = properties.getKeyValues("ReceiverUdid");
 		String senderPortNo = properties.getKeyValues("SenderPortNo");
@@ -62,73 +61,32 @@ public class DataTransferTest {
 		String wifiName = receiverHomePage.getWifiName();
 		senderHomePage.getWifiPage();
 		senderHomePage.setWifiName(wifiName);
-	}
-	
-	@Test
-	public void picturePairingPageTest() {
+		
 		receiverPicturePage = new PicturePage(receiver.driver);
 		String imageName = receiverPicturePage.getImageName();
 		senderPicturePage = new PicturePage(sender.driver);
-		Assert.assertTrue(senderPicturePage.isDisplayed());
 		senderPicturePage.setImage(imageName);
 	}
 	
-	@Test(dependsOnMethods = { "picturePairingPageTest" })
-	public void remindersNotSupportedTest() {
+	@Test
+	public void interruptWifiTest() {
 		senderLightDataPage = new LightDataTransferPage(sender.driver);
-		receiverLightDataPage = new LightDataTransferPage(receiver.driver);
-		hashmap = senderLightDataPage.createList();
-		Assert.assertEquals(hashmap.get("Reminders"), "Not Supported");
-	}
-	
-	@Test(dependsOnMethods = { "remindersNotSupportedTest" })
-	public void lightDataCountTest() {
-		Assert.assertEquals(hashmap.get("Contacts"), properties.getKeyValues("Contacts"));
-		Assert.assertEquals(hashmap.get("Call Logs"), properties.getKeyValues("CallLogs"));
-		Assert.assertEquals(hashmap.get("Calendar"), properties.getKeyValues("Calendar"));
-		Assert.assertEquals(hashmap.get("Messages"), properties.getKeyValues("Messages"));
-	}
-	
-	@Test(dependsOnMethods = { "lightDataCountTest" })
-	public void selectiveDataTransferTest() {
-		Assert.assertFalse(senderLightDataPage.unselectCallLogs());
-	}
-	
-	@Test(dependsOnMethods = { "selectiveDataTransferTest" })
-	public void lightDataTransferTest() {
-		senderLightDataPage.startDataTransfer();
-		Assert.assertEquals(receiverLightDataPage.getPercentageTransferred(), senderLightDataPage.getPercentageTransferred());
-	}
-	
-	@Test(dependsOnMethods = { "lightDataTransferTest" })
-	public void documentsNotSupportedTest() {
-		senderLightDataPage.continueToHeavyDataTransfer();
+		senderLightDataPage.skipToHeavyDataTransfer();
 		senderHeavyDataPage = new HeavyDataTransferPage(sender.driver);
 		receiverHeavyDataPage = new HeavyDataTransferPage(receiver.driver);
-		hashmap = senderHeavyDataPage.createList();
-		Assert.assertEquals(hashmap.get("Documents"), "Not Supported");
+		Assert.assertTrue(senderHeavyDataPage.isSenderWifiInterrupted(senderUdid));
+		Assert.assertTrue(receiverHeavyDataPage.isReceiverWifiInterrupted());
 	}
 	
-	@Test(dependsOnMethods = { "documentsNotSupportedTest" })
-	public void heavyDataCountTest() {
-		Assert.assertEquals(hashmap.get("Photos"), properties.getKeyValues("Photos"));
-		Assert.assertEquals(hashmap.get("Music"), properties.getKeyValues("Music"));
-		Assert.assertEquals(hashmap.get("Videos"), properties.getKeyValues("Videos"));
-		Assert.assertEquals(hashmap.get("Applications"), properties.getKeyValues("Applications"));
-	}
-	
-	@Test(dependsOnMethods = { "heavyDataCountTest" })
-	public void heavyDataTimeEstimateTest() {
-		Long estimatedTime = senderHeavyDataPage.getEstimatedTime();
-		Long actualTime = senderHeavyDataPage.getActualDataTransferTime();
-		System.out.println(estimatedTime + " " + actualTime);
-		if (estimatedTime - 60000 > actualTime || estimatedTime + 60000 < actualTime) {
-			Assert.assertTrue(false);
-		}
-	}
-	
-	@Test(dependsOnMethods = { "heavyDataTimeEstimateTest" })
-	public void heavyDataTransferTest() {
+	@Test(dependsOnMethods = {"interruptWifiTest"})
+	public void resumeDataTransferTest() {
+		AdbResponse.startWifi(senderUdid);
+		setup();
+		senderLightDataPage = new LightDataTransferPage(sender.driver);
+		senderLightDataPage.resumeDataTransfer();
+		senderHeavyDataPage = new HeavyDataTransferPage(sender.driver);
+		receiverHeavyDataPage = new HeavyDataTransferPage(receiver.driver);
+		senderHeavyDataPage.transferData();
 		Assert.assertEquals(receiverHeavyDataPage.getPercentageTransferred(), senderHeavyDataPage.getPercentageTransferred());
 	}
 	
@@ -142,4 +100,6 @@ public class DataTransferTest {
 		receiver.releaseDriver();
 		sender.releaseDriver();
 	}
+	
 }
+

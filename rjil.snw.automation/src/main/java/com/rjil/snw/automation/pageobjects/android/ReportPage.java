@@ -2,6 +2,8 @@ package com.rjil.snw.automation.pageobjects.android;
 
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -28,7 +30,15 @@ private RemoteWebDriver driver;
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
 	}
 	
+	public boolean isDispalyed() {
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.visibilityOf(this.continueButton));
+		return this.continueButton.isDisplayed();
+	}
+	
 	public void clickContinue() {
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.visibilityOf(this.continueButton));
 		this.continueButton.click();
 	}
 	

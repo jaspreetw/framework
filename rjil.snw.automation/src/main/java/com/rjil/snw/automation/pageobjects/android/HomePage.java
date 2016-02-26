@@ -46,6 +46,11 @@ public class HomePage {
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
 	}
 
+	public boolean isDispalyed() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(this.deviceInfo));
+		return this.deviceInfo.isDisplayed();
+	}
 	
 	public String getDeviceName() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -74,7 +79,7 @@ public class HomePage {
 
 	
 	public String getWifiName() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, 60);
 		wait.until(ExpectedConditions.visibilityOf(this.receive));
 		this.receive.click();
 		this.androidPeer.click();
@@ -88,13 +93,15 @@ public class HomePage {
 
 	
 	public void setWifiName(String wifiName) {
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.visibilityOf(this.continueButton));
 		driver.findElement(By.xpath("//android.widget.TextView[@text='" + wifiName + "']")).click();
 		this.continueButton.click();
 	}
 	
 	public void getWifiPage() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(this.receive));
+		WebDriverWait wait = new WebDriverWait(driver, 60);
+		wait.until(ExpectedConditions.visibilityOf(this.send));
 		this.send.click();
 		this.androidPeer.click();
 	}

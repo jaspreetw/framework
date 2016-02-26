@@ -1,10 +1,13 @@
 package com.rjil.snw.automation.test;
 
+import java.io.IOException;
+
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
 public class LoggingClass extends TestListenerAdapter{
 	private int m_count = 0;
+	private org.apache.log4j.Logger logger = Logger.logger;
 	
     @Override
     public void onTestFailure(ITestResult tr) {
@@ -24,6 +27,13 @@ public class LoggingClass extends TestListenerAdapter{
 	 
     private void log(String string) {
         System.out.print(string);
+        try {
+			Logger.initLogger();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        logger.info(string);
         if (++m_count % 40 == 0) {
 	    System.out.println("");
         }

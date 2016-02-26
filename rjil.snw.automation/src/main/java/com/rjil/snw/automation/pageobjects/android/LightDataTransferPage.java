@@ -27,6 +27,12 @@ public class LightDataTransferPage {
 
 	@AndroidFindBy(xpath = "//android.widget.Button[@text='CONTINUE']")
 	private MobileElement continueButton;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/skipButton")
+	private MobileElement skipButton;
+	
+	@AndroidFindBy(xpath = "//android.widget.Button[@text='YES']")
+	private MobileElement resume;
 
 	public LightDataTransferPage(RemoteWebDriver remoteWebDriver) {
 		driver = (AppiumDriver) remoteWebDriver;
@@ -55,6 +61,12 @@ public class LightDataTransferPage {
 		this.continueButton.click();
 	}
 
+	public void skipToHeavyDataTransfer() {
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.visibilityOf(this.skipButton));
+		this.skipButton.click();
+	}
+	
 	public HashMap<String, String> createList() {
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.visibilityOf(this.sendData));
@@ -67,6 +79,12 @@ public class LightDataTransferPage {
 			hashmap.put(str1, str2);
 		}
 		return hashmap;
+	}
+	
+	public void resumeDataTransfer() {
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.visibilityOf(this.resume));
+		this.resume.click();
 	}
 
 }

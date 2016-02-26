@@ -177,4 +177,24 @@ public class AdbResponse {
 			return -1;
 		}
 	}
+	
+	public static void stopWifi(String udid) {
+		try {
+			String str = "adb -s " + udid
+					+ " shell am start -n com.reliance.automationhelper/.MainActivity -e automation wifi -e state false";
+			CommandRunner.executeAdbCommand(str);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void startWifi(String udid) {
+		try {
+			String str = "adb -s " + udid
+					+ " shell am start -n com.reliance.automationhelper/.MainActivity -e automation wifi -e state true";
+			CommandRunner.executeAdbCommand(str);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
