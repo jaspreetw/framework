@@ -102,5 +102,4 @@ public class HomePage {
 	public boolean isWifiNamePresent(String wifiName) {
 		return driver.findElement(By.xpath("//android.widget.TextView[@text='" + wifiName + "']")).isDisplayed();
 	}
-	
 }

@@ -23,7 +23,9 @@ public class HomePageTest {
 		super();
 		udid = properties.getKeyValues("SenderUdid");
 		String portNo = properties.getKeyValues("SenderPortNo");
-		device.initialiseDriver("android", udid, portNo);
+		String appPackage = properties.getKeyValues("SnwPackage");
+		String appActivity = properties.getKeyValues("SnwActivity");
+		device.initialiseDriver("android", udid, portNo, appPackage, appActivity);
 		
 	}
 
@@ -40,21 +42,21 @@ public class HomePageTest {
 		Assert.assertTrue(result.contains(expected));
 	}
 	
-	@Test
+	@Test(dependsOnMethods = { "testDeviceName" })
 	public void testNetworkName() {
 		String expected = AdbResponse.getNetworkName(udid);
 		String result = homePage.getNetworkName();
 		Assert.assertTrue(result.contains(expected));
 	}
 
-	@Test
+	@Test(dependsOnMethods = { "testNetworkName" })
 	public void testVersionNumber() {
 		String expected = AdbResponse.getVersionNumber();
 		String result = homePage.getVersionNumber();
 		Assert.assertTrue(result.contains(expected));
 	}
 	
-	@Test
+	@Test(dependsOnMethods = { "testVersionNumber" })
 	public void testIsTandCpageDisplayed() {
 		boolean response = homePage.gotoTandCpage();
 		Assert.assertTrue(response);

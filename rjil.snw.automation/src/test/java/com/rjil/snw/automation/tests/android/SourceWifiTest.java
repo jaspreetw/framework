@@ -33,9 +33,11 @@ static PropertyFileReader properties = new PropertyFileReader();
 		String senderPortNo = properties.getKeyValues("SenderPortNo");
 		String receiverPortNo1 = properties.getKeyValues("ReceiverPortNo");
 		String receiverPortNo2= properties.getKeyValues("ReceiverPortNo2");
-		sender.initialiseDriver("android", senderUdid, senderPortNo);
-		receiver1.initialiseDriver("android", receiverUdid1, receiverPortNo1);
-		receiver2.initialiseDriver("android", receiverUdid2, receiverPortNo2);
+		String appPackage = properties.getKeyValues("SnwPackage");
+		String appActivity = properties.getKeyValues("SnwActivity");
+		sender.initialiseDriver("android", senderUdid, senderPortNo, appPackage, appActivity);
+		receiver1.initialiseDriver("android", receiverUdid1, receiverPortNo1, appPackage, appActivity);
+		receiver2.initialiseDriver("android", receiverUdid2, receiverPortNo2, appPackage, appActivity);
 	}
 	
 	@BeforeClass

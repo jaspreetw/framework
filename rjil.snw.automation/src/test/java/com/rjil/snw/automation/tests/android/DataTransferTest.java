@@ -48,8 +48,10 @@ public class DataTransferTest {
 		receiverUdid = properties.getKeyValues("ReceiverUdid");
 		String senderPortNo = properties.getKeyValues("SenderPortNo");
 		String receiverPortNo = properties.getKeyValues("ReceiverPortNo");
-		sender.initialiseDriver("android", senderUdid, senderPortNo);
-		receiver.initialiseDriver("android", receiverUdid, receiverPortNo);
+		String appPackage = properties.getKeyValues("SnwPackage");
+		String appActivity = properties.getKeyValues("SnwActivity");
+		sender.initialiseDriver("android", senderUdid, senderPortNo, appPackage, appActivity);
+		receiver.initialiseDriver("android", receiverUdid, receiverPortNo, appPackage, appActivity);
 	}
 	
 	@BeforeClass

@@ -12,13 +12,13 @@ import io.appium.java_client.ios.IOSDriver;
 public enum DriverDetails {
 	Andriod {
 		@Override
-		RemoteWebDriver getDriverDetails(String udid, String portNo) throws MalformedURLException {
+		RemoteWebDriver getDriverDetails(String udid, String portNo, String AppPackage, String AppActivity) throws MalformedURLException {
 			DesiredCapabilities caps = new DesiredCapabilities();
 			RemoteWebDriver driver;
 			caps.setCapability("platformName", "android");
 			caps.setCapability("deviceName", "Micromax");
-			caps.setCapability("appPackage", "com.reliance.jio.jioswitch");
-			caps.setCapability("appActivity", "com.reliance.jio.jioswitch.ui.SplashActivity");
+			caps.setCapability("appPackage", AppPackage);
+			caps.setCapability("appActivity", AppActivity);
 			caps.setCapability("udid", udid);
 			driver = new AndroidDriver(new URL("http://127.0.0.1:"+portNo+"/wd/hub"), caps);
 			return driver;
@@ -26,7 +26,7 @@ public enum DriverDetails {
 	},
 	IOS {
 		@Override
-		RemoteWebDriver getDriverDetails(String udid, String portNo) throws MalformedURLException {
+		RemoteWebDriver getDriverDetails(String udid, String portNo, String AppPackage, String AppActivity) throws MalformedURLException {
 			DesiredCapabilities caps = new DesiredCapabilities();
 			RemoteWebDriver driver;
 			caps.setCapability("platformName", "iOS");
@@ -39,5 +39,5 @@ public enum DriverDetails {
 		}
 	},;
 	
-	abstract RemoteWebDriver getDriverDetails(String udid, String portNo) throws MalformedURLException;
+	abstract RemoteWebDriver getDriverDetails(String udid, String portNo, String AppPackage, String AppActivity) throws MalformedURLException;
 }

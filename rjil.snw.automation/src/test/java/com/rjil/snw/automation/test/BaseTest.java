@@ -13,12 +13,12 @@ public class BaseTest {
 
 	public RemoteWebDriver driver;
 
-	public void initialiseDriver(String device, String udid, String portNo) {
+	public void initialiseDriver(String device, String udid, String portNo, String appPackage, String appActivity) {
 		try {
 			if (device.equalsIgnoreCase("IOS")) {
-				driver = DriverDetails.IOS.getDriverDetails(udid, portNo);
+				driver = DriverDetails.IOS.getDriverDetails(udid, portNo, appPackage, appActivity);
 			} else if (device.equalsIgnoreCase("Android")) {
-				driver = DriverDetails.Andriod.getDriverDetails(udid, portNo);
+				driver = DriverDetails.Andriod.getDriverDetails(udid, portNo, appPackage, appActivity);
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
