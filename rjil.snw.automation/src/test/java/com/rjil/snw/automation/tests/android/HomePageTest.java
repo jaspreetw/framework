@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import com.rjil.snw.automation.AdbResponse;
 import com.rjil.snw.automation.PropertyFileReader;
+import com.rjil.snw.automation.UtilityClass;
 import com.rjil.snw.automation.pageobjects.android.HomePage;
 import com.rjil.snw.automation.test.BaseTest;
 
@@ -51,7 +52,7 @@ public class HomePageTest {
 
 	@Test(dependsOnMethods = { "testNetworkName" })
 	public void testVersionNumber() {
-		String expected = AdbResponse.getVersionNumber();
+		String expected = UtilityClass.getVersionName();
 		String result = homePage.getVersionNumber();
 		Assert.assertTrue(result.contains(expected));
 	}

@@ -9,6 +9,10 @@ import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.rjil.snw.automation.test.LoggingClass;
+
+import org.apache.commons.exec.OS;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -17,23 +21,53 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-public class CommonFunctions {
+public class UtilityClass {
 
 	static PropertyFileReader properties = new PropertyFileReader();
 
-	public static int getAppCount() {
+	public static String setFind() {
+		String find = "";
+		if (OS.isFamilyMac()) {
+			find = "grep";
+		} else if (OS.isFamilyWindows()) {
+			find = "findstr";
+		}
+		return find;
+	}
+
+	public static String getVersionName() {
+		String versionName = null;
+		try {
+			String aaptPath = properties.getKeyValues("AaptPath");
+			String apkPath = properties.getKeyValues("ApkPath");
+			String find = UtilityClass.setFind();
+			String str = aaptPath + " dump badging " + apkPath + " | " + find + " 'versionName'";
+			BufferedReader buffer = CommandRunner.executeCommand(str);
+			versionName = buffer.readLine();
+			versionName = versionName.substring(versionName.indexOf("versionName") + 13,
+					versionName.indexOf("platformBuildVersionName") - 2);
+		} catch (IOException e) {
+			e.printStackTrace();
+			LoggingClass.errorLog(e);
+		}
+		return versionName;
+	}
+
+	public static int getBoxAppCount() {
+		int countOfApps = -1;
 		try {
 			AdbResponse.connectToBoxWifi(properties.getKeyValues("BoxSsid"));
 			String uri = properties.getKeyValues("uri");
 			String url = properties.getKeyValues("url");
 			String brand = properties.getKeyValues("brand");
 			String header = properties.getKeyValues("header");
+			String boxIp = properties.getKeyValues("boxIp");
 
-			String str = "adb connect 192.168.49.1";
-			BufferedReader buf = CommandRunner.executeAdbCommand(str);
+			String str = "adb connect " + boxIp;
+			CommandRunner.executeAdbCommand(str);
 
-			str = "adb -s 192.168.49.1:5555 remount";
-			buf = CommandRunner.executeAdbCommand(str);
+			str = "adb -s " + boxIp + ":5555 remount";
+			CommandRunner.executeAdbCommand(str);
 
 			String final_uri = uri + "&brand=" + brand;
 			System.out.println("uri = " + final_uri + " header = " + header);
@@ -43,7 +77,7 @@ public class CommonFunctions {
 			JSONObject jsonobject = json.getJSONObject(0);
 			JSONArray jsonarray = jsonobject.getJSONArray("applications");
 			HashMap<String, ArrayList<String>> appDetails = new HashMap<String, ArrayList<String>>();
-			int countOfApps = jsonarray.length();
+			countOfApps = jsonarray.length();
 			PrintWriter writer = new PrintWriter("packagename.txt", "UTF-8");
 			writer.println("com.reliance.jio.jioswitch");
 			writer.println("io.appium.unlock");
@@ -58,13 +92,13 @@ public class CommonFunctions {
 				appDetails.put(jsonarray.getJSONObject(i).getString("appName"), appDetailsArray);
 			}
 			writer.close();
-			return countOfApps;
 		} catch (IOException e) {
 			e.printStackTrace();
-			return 0;
+			LoggingClass.errorLog(e);
 		}
+		return countOfApps;
 	}
-	
+
 	public static String callGet(String url, String uri, String header) throws ClientProtocolException, IOException {
 
 		String responseString = null;
@@ -75,19 +109,14 @@ public class CommonFunctions {
 			String[] header1 = headerList.split(":");
 			http.addHeader(header1[0], header1[1]);
 
-			// Execute the request using httpclient and save the response
-
 			HttpClient httpClient = HttpClients.createDefault();
 			HttpResponse response = null;
 			response = httpClient.execute(http);
-
-			// Display the response
 
 			HttpEntity entity = response.getEntity();
 			responseString = EntityUtils.toString(entity, "UTF-8");
 
 		}
-
 		return responseString;
 
 	}
