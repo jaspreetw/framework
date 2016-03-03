@@ -2,6 +2,7 @@ package com.rjil.snw.automation;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -164,6 +165,57 @@ public class AdbResponse {
 			LoggingClass.errorLog(e);
 		}
 		return count;
+	}
+
+	public static void createLoactionFile(String udid) {
+		try {
+			String automationHelper = properties.getKeyValues("AutomationHelper");
+			String oldAppFileMobile = properties.getKeyValues("OldAppFileMobile");
+			String str = "adb -s " + udid + " am start -n " + automationHelper
+					+ " -e automation getAppFileLocation -e state true -e destinationFIle " + oldAppFileMobile;
+			CommandRunner.executeAdbCommand(str);
+		} catch (IOException e) {
+			e.printStackTrace();
+			LoggingClass.errorLog(e);
+		}
+	}
+
+	public static void installOldPhoneApps(String senderUdid, String receiverUdid) {
+		try {
+			String packageName;
+			String str;
+			String oldAppFolderSystem = properties.getKeyValues("OldAppFolderInSystem");
+			String oldAppFileMobile = properties.getKeyValues("OldAppFileMobile");
+			String oldAppFileSystem = properties.getKeyValues("OldAppFileSystem");
+			String fileName = properties.getKeyValues("FileName");
+			
+			str = "adb -s " + senderUdid + " pull " + oldAppFileMobile + " " + oldAppFileSystem;
+			CommandRunner.executeAdbCommand(str);
+			
+			BufferedReader buffer = new BufferedReader(new FileReader(oldAppFileSystem + "/" + fileName));
+			String filePath = buffer.readLine();
+			while ((packageName = buffer.readLine()) != null) {
+				str = "adb -s " + receiverUdid + " pull " + filePath + packageName + " " + oldAppFolderSystem;
+				CommandRunner.executeAdbCommand(str);
+			}
+			File appfile = new File(properties.getKeyValues("OldAppFolderInSystem"));
+			File[] files = appfile.listFiles();
+			for (File file1 : files) {
+				if (file1.getName().endsWith(".apk") && !file1.getName().equals("com.reliance.jio.jioswitch-1.apk")) {
+					str = "adb -s " + receiverUdid + " install " + oldAppFolderSystem + file1.getName();
+					CommandRunner.executeAdbCommand(str);
+				}
+			}
+			
+			str = "adb -s " + receiverUdid + " shell input keyevent 4";
+			CommandRunner.executeAdbCommand(str);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			LoggingClass.errorLog(e);
+		} catch (IOException e) {
+			e.printStackTrace();
+			LoggingClass.errorLog(e);
+		}
 	}
 
 	public static void stopWifi(String udid) {

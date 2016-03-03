@@ -41,6 +41,12 @@ public class HomePage {
 	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/webView")
 	private MobileElement termsAndConditionsPage;
 	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/installButton")
+	private MobileElement install;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/installOldAppsButton")
+	private MobileElement installOldPhoneApps;
+	
 	public HomePage(RemoteWebDriver remoteWebDriver) {
 		driver = (AppiumDriver) remoteWebDriver;
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
@@ -71,12 +77,22 @@ public class HomePage {
 		return result;
 	}
 	
+	public boolean installEnabled() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(this.deviceInfo));
+		this.installOldPhoneApps.click();
+		return this.install.isEnabled();
+	}
+	
+	public boolean installDisabled() {
+		this.installOldPhoneApps.click();
+		return !(this.install.isEnabled());
+	}
 	
 	public boolean gotoTandCpage() {
 		this.linkToTandCpage.click(); 
 		return this.termsAndConditionsPage.isDisplayed();
 	}
-
 	
 	public String getWifiName() {
 		WebDriverWait wait = new WebDriverWait(driver, 60);

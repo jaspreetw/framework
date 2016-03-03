@@ -25,6 +25,12 @@ private RemoteWebDriver driver;
 	@AndroidFindBy(xpath = "//android.widget.Button[@text='YES']")
 	private MobileElement confirmYes;
 	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/message")
+	private MobileElement message;
+	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/progressBar")
+	private MobileElement progressBar;
+	
 	public ReportPage(RemoteWebDriver remoteWebDriver) {
 		driver = (AppiumDriver) remoteWebDriver;
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
@@ -37,13 +43,22 @@ private RemoteWebDriver driver;
 	}
 	
 	public void clickContinue() {
-		WebDriverWait wait = new WebDriverWait(driver, 20);
+		WebDriverWait wait = new WebDriverWait(driver, 30);
 		wait.until(ExpectedConditions.visibilityOf(this.continueButton));
 		this.continueButton.click();
 	}
 	
-	public void clickTryAgain() {
-		this.tryAgain.click();
+	public boolean summaryReport() {
+		boolean result = false;
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.stalenessOf(this.progressBar));
+		String str = this.message.getText();
+		if(str.equals("Summary report sent successfully")) {
+			result = true;
+		} else {
+			this.tryAgain.click();
+		}
+		return result;
 	}
 	
 	public void clickExit() {

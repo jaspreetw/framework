@@ -31,9 +31,16 @@ public class InstallAppsPage {
 	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Bill Bachao']")
 	private MobileElement lastAppPage;
 	
+	@AndroidFindBy(id = "com.reliance.jio.jioswitch:id/webView")
+	private MobileElement wifiNotConnected;
+	
 	public InstallAppsPage(RemoteWebDriver remoteWebDriver) {
 		driver = (AppiumDriver) remoteWebDriver;
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
+	}
+	
+	public boolean wifiNotConnectedDialogDisplayed() {
+		return this.wifiNotConnected.isDisplayed();
 	}
 	
 	public boolean downloadApps() {

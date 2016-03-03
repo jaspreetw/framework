@@ -132,10 +132,19 @@ public class DataTransferTest {
 		Assert.assertEquals(receiverHeavyDataPage.getPercentageTransferred(), senderHeavyDataPage.getPercentageTransferred());
 	}
 	
+	@Test(dependsOnMethods = { "heavyDataTransferTest" })
+	public void reportSentTest() {
+		receiverReportPage = new ReportPage(receiver.driver);
+		boolean flag = receiverReportPage.summaryReport();
+		if(!flag){
+			flag = receiverReportPage.summaryReport();
+		}
+		Assert.assertTrue(flag);
+	}
+	
 	@AfterTest
 	public void endTest() {
 		senderReportPage = new ReportPage(sender.driver);
-		receiverReportPage = new ReportPage(receiver.driver);
 		receiverReportPage.clickContinue();
 		senderReportPage.clickExit();
 		senderReportPage.clickYes();

@@ -52,7 +52,7 @@ public class UtilityClass {
 		}
 		return versionName;
 	}
-
+	
 	public static int getBoxAppCount() {
 		int countOfApps = -1;
 		try {
